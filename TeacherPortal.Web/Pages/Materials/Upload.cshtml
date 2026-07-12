@@ -1,0 +1,65 @@
+﻿@page "/materials/upload/{lessonId:int?}"
+@model TeacherPortal.Web.Pages.Materials.UploadModel
+@{
+    ViewData["Title"] = "Загрузка материала";
+}
+
+<div class="container mt-4">
+    <h2>📤 Загрузка материала для пары</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <form method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Upload.LessonId" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Upload.Title">Название материала</label>
+                    <input asp-for="Upload.Title" class="form-control" required />
+                    <span asp-validation-for="Upload.Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Upload.Description">Описание</label>
+                    <textarea asp-for="Upload.Description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Upload.File">Файл</label>
+                    <input asp-for="Upload.File" type="file" class="form-control" required />
+                    <span asp-validation-for="Upload.File" class="text-danger"></span>
+                    <small class="form-text text-muted">Поддерживаемые форматы: PDF, DOCX, PPTX, ZIP (макс. 50 МБ)</small>
+                </div>
+
+                <div class="form-group form-check mb-3">
+                    <input asp-for="Upload.IsPublic" class="form-check-input" />
+                    <label asp-for="Upload.IsPublic" class="form-check-label">Доступно для студентов</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Загрузить</button>
+                <a href="/lessons/counter" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>Информация</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Пара:</strong> @Model.LessonInfo</p>
+                    <p><strong>Группа:</strong> @Model.GroupInfo</p>
+                    <p><strong>Курс:</strong> @Model.CourseInfo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

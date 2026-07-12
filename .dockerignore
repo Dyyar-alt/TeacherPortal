@@ -1,0 +1,40 @@
+# Папки с бинарниками
+bin/
+obj/
+publish/
+
+# Папка с данными (SQLite база)
+Data/
+*.db
+*.db-shm
+*.db-wal
+
+# Папки разработки
+.vs/
+.vscode/
+.idea/
+.vs/
+
+# Системные файлы
+*.user
+*.suo
+*.pid
+*.seed
+
+# Логи
+*.log
+logs/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*
+README.md
+
+# Папка с файлами пользователей
+wwwroot/uploads/

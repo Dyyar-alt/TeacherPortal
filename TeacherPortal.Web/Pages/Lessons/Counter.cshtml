@@ -1,0 +1,110 @@
+﻿@page "/lessons/counter/{groupId?}"
+@model TeacherPortal.Web.Pages.Lessons.CounterModel
+@{
+    ViewData["Title"] = "Счетчик пар";
+}
+
+<div class="container mt-4">
+    <h2>📊 Счетчик выданных пар</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5>Выберите группу</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="form-group">
+                            <label for="groupId">Группа:</label>
+                            <select id="groupId" name="groupId" class="form-control" onchange="this.form.submit()">
+                                <option value="">-- Выберите группу --</option>
+                                @foreach (var group in Model.Groups)
+                                {
+                                    <option value="@group.Id" selected="@(group.Id == Model.SelectedGroupId)">
+                                        @group.Name - @group.Course.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Progress != null)
+        {
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5>Прогресс группы</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5>@Model.Progress.GroupName</h5>
+                        <p>Курс: @Model.Progress.CourseName</p>
+
+                        <div class="progress mb-3" style="height: 30px;">
+                            <div class="progress-bar bg-info"
+                                 role="progressbar"
+                                 style="width: @Model.Progress.ProgressPercentage%;"
+                                 aria-valuenow="@Model.Progress.IssuedLessons"
+                                 aria-valuemin="0"
+                                 aria-valuemax="@Model.Progress.TotalLessons">
+                                @Model.Progress.ProgressPercentage%
+                            </div>
+                        </div>
+
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <h3>@Model.Progress.IssuedLessons</h3>
+                                <small class="text-muted">Выдано пар</small>
+                            </div>
+                            <div class="col-4">
+                                <h3>@Model.Progress.RemainingLessons</h3>
+                                <small class="text-muted">Осталось пар</small>
+                            </div>
+                            <div class="col-4">
+                                <h3>@Model.Progress.TotalLessons</h3>
+                                <small class="text-muted">Всего пар</small>
+                            </div>
+                        </div>
+
+                        <form method="post" asp-page-handler="IssueNext" class="mt-3">
+                            <input type="hidden" name="groupId" value="@Model.SelectedGroupId" />
+                            <button type="submit" class="btn btn-success w-100"
+                                    disabled="@Model.Progress.IsComplete">
+                                @if (Model.Progress.IsComplete)
+                                {
+                                    <span>✅ Курс завершен</span>
+                                }
+                                else
+                                {
+                                    <span>🎯 Выдать следующую пару</span>
+                                }
+                            </button>
+                        </form>
+
+                        <a href="/materials/upload/@Model.SelectedGroupId" class="btn btn-outline-primary w-100 mt-2">
+                            📤 Загрузить материал для этой пары
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
