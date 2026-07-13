@@ -40,6 +40,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Регистрируем сервисы
 builder.Services.AddScoped<ILessonCounterService, LessonCounterService>();
+builder.Services.AddScoped<IMaterialService, MaterialService>();
 
 var app = builder.Build();
 
@@ -59,6 +60,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapGet("/", context => {
+    context.Response.Redirect("/lessons/counter");
+    return Task.CompletedTask;
+});
 
 // Применяем миграции и инициализируем базу данных
 using (var scope = app.Services.CreateScope())
