@@ -24,11 +24,29 @@ public class CounterModel : PageModel
     public List<Group> Groups { get; set; } = new();
     public int? SelectedGroupId { get; set; }
     public LessonCounterViewModel? Progress { get; set; }
+    public string CurrentFilialName { get; set; } = "Не выбран";
+    public int? CurrentFilialId { get; set; }
 
     public async Task OnGetAsync(int? groupId)
     {
+        // Получаем выбранный филиал из сессии
+        CurrentFilialId = HttpContext.Session.GetInt32("SelectedFilialId");
+
+        if (!CurrentFilialId.HasValue)
+        {
+            // Если филиал не выбран, перенаправляем на страницу выбора
+            Response.Redirect("/filials/select");
+            return;
+        }
+
+        // Загружаем имя филиала
+        var filial = await _context.Filials.FindAsync(CurrentFilialId.Value);
+        CurrentFilialName = filial?.Name ?? "Филиал не найден";
+
+        // Загружаем группы только для текущего филиала
         Groups = await _context.Groups
             .Include(g => g.Course)
+            .Where(g => g.Course.FilialId == CurrentFilialId.Value)
             .OrderBy(g => g.Course.Name)
             .ThenBy(g => g.Name)
             .ToListAsync();

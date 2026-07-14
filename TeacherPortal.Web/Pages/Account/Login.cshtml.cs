@@ -42,7 +42,7 @@ public class LoginModel : PageModel
         if (result.Succeeded)
         {
             _logger.LogInformation($"Пользователь {Input.Email} вошел в систему");
-            return RedirectToPage("/Lessons/Counter");
+            return RedirectToPage("/Filials/Select");
         }
 
         ErrorMessage = "Неверный email или пароль.";

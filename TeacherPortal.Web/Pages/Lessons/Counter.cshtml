@@ -5,7 +5,15 @@
 }
 
 <div class="container mt-4">
-    <h2>📊 Счетчик выданных пар</h2>
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>📊 Счетчик выданных пар</h2>
+        <div>
+            <span class="badge bg-info fs-6 me-2">
+                🏢 @Model.CurrentFilialName
+            </span>
+            <a href="/filials/select" class="btn btn-sm btn-outline-secondary">Сменить филиал</a>
+        </div>
+    </div>
 
     @if (TempData["SuccessMessage"] != null)
     {
@@ -42,6 +50,12 @@
                                 }
                             </select>
                         </div>
+                        @if (!Model.Groups.Any())
+                        {
+                            <div class="alert alert-warning mt-3">
+                                В этом филиале пока нет групп. Создайте группу в разделе управления.
+                            </div>
+                        }
                     </form>
                 </div>
             </div>

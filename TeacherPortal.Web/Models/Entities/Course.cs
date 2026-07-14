@@ -20,4 +20,6 @@ public class Course
 
     public ICollection<Group> Groups { get; set; } = new List<Group>();
     public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+    public int FilialId { get; set; }
+    public Filial Filial { get; set; } = null!;
 }
