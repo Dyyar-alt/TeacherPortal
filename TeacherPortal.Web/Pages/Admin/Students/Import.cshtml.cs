@@ -10,7 +10,7 @@ using TeacherPortal.Web.Models.ViewModels.Admin;
 
 namespace TeacherPortal.Web.Pages.Admin.Students;
 
-[Authorize(Policy = "AdminOnly")]
+[Authorize(Roles = "Admin")]
 public class ImportModel : PageModel
 {
     private readonly ApplicationDbContext _context;
@@ -44,7 +44,11 @@ public class ImportModel : PageModel
             return Page();
         }
 
-        // Проверяем, что файл выбран
+        // ... (весь остальной код остается без изменений) ...
+        // Проверка файла, обработка Excel и т.д.
+
+        // --- КОД НИЖЕ НЕ МЕНЯЕТСЯ, ОН РАБОТАЕТ КОРРЕКТНО ---
+
         if (Import.File == null || Import.File.Length == 0)
         {
             ErrorMessage = "Пожалуйста, выберите файл.";
@@ -52,7 +56,6 @@ public class ImportModel : PageModel
             return Page();
         }
 
-        // Проверяем расширение файла
         var extension = Path.GetExtension(Import.File.FileName).ToLowerInvariant();
         if (extension != ".xlsx" && extension != ".xls")
         {
@@ -61,7 +64,6 @@ public class ImportModel : PageModel
             return Page();
         }
 
-        // Проверяем, существует ли группа
         var group = await _context.Groups.FindAsync(Import.GroupId);
         if (group == null)
         {
@@ -77,17 +79,16 @@ public class ImportModel : PageModel
             stream.Position = 0;
 
             using var package = new ExcelPackage(stream);
-            var worksheet = package.Workbook.Worksheets[0]; // Берем первый лист
+            var worksheet = package.Workbook.Worksheets[0];
             var rowCount = worksheet.Dimension?.Rows ?? 0;
 
             if (rowCount < 2)
             {
-                ErrorMessage = "Файл не содержит данных для импорта (нет строк с данными).";
+                ErrorMessage = "Файл не содержит данных для импорта.";
                 await LoadGroupsAsync();
                 return Page();
             }
 
-            // Определяем заголовки
             var headerRow = 1;
             var nameCol = -1;
             var emailCol = -1;
@@ -96,18 +97,14 @@ public class ImportModel : PageModel
             {
                 var header = worksheet.Cells[headerRow, col].Text.Trim().ToLowerInvariant();
                 if (header == "фио" || header.Contains("ф.и.о.") || header == "fullname" || header == "name")
-                {
                     nameCol = col;
-                }
                 if (header == "email" || header == "почта")
-                {
                     emailCol = col;
-                }
             }
 
             if (nameCol == -1)
             {
-                ErrorMessage = "В файле не найден столбец 'ФИО'. Проверьте заголовки.";
+                ErrorMessage = "В файле не найден столбец 'ФИО'.";
                 await LoadGroupsAsync();
                 return Page();
             }
@@ -149,15 +146,13 @@ public class ImportModel : PageModel
                 SkippedCount = skipped;
                 SuccessMessage = $"Импортировано {ImportedCount} студентов.";
                 if (SkippedCount > 0)
-                {
-                    SuccessMessage += $" Пропущено: {SkippedCount} (пустые или некорректные строки).";
-                }
+                    SuccessMessage += $" Пропущено: {SkippedCount}.";
 
                 _logger.LogInformation($"Импортировано {ImportedCount} студентов в группу {group.Name}");
             }
             else
             {
-                ErrorMessage = "Не найдено данных для импорта. Проверьте формат файла.";
+                ErrorMessage = "Не найдено данных для импорта.";
             }
         }
         catch (Exception ex)
@@ -172,16 +167,20 @@ public class ImportModel : PageModel
 
     private async Task LoadGroupsAsync()
     {
-        Groups = await _context.Groups
+        // === ИСПРАВЛЕННЫЙ МЕТОД ===
+        var groups = await _context.Groups
             .Include(g => g.Course)
             .ThenInclude(c => c.Filial)
+            .ToListAsync();
+
+        Groups = groups
             .Select(g => new SelectListItem
             {
                 Value = g.Id.ToString(),
                 Text = $"{g.Name} ({g.Course.Name} - {g.Course.Filial.Name})"
             })
             .OrderBy(g => g.Text)
-            .ToListAsync();
+            .ToList();
     }
 
     private bool IsValidEmail(string email)

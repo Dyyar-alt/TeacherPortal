@@ -32,6 +32,7 @@ public class LogoutModel : PageModel
         // Очищаем сессию
         HttpContext.Session.Clear();
 
-        return RedirectToPage("/Materials/ByGroup");
+        // Перенаправляем на страницу входа
+        return RedirectToPage("/Account/Login");
     }
 }

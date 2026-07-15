@@ -8,25 +8,34 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TeacherPortal.Web.styles.css" asp-append-version="true" />
 
-    <!-- Дополнительные стили для красоты -->
     <style>
+            /* Базовые стили для единообразия */
             .navbar-brand {
-                font-weight: 600;
+                font-weight: 700;
                 color: #0d6efd !important;
             }
+
             .nav-link:hover {
                 color: #0d6efd !important;
             }
+
             .dropdown-item:hover {
                 background-color: #e9ecef;
             }
+
             .user-info {
                 font-size: 0.9rem;
                 color: #6c757d;
             }
+
             .footer {
                 background-color: #f8f9fa;
                 padding: 1.5rem 0;
+            }
+            /* Плавные переходы для аккордеона */
+            .accordion-button:not(.collapsed) {
+                background-color: #e7f1ff;
+                color: #0d6efd;
             }
     </style>
 </head>
@@ -34,32 +43,30 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
             <div class="container">
+                <!-- Логотип/Бренд -->
                 <a class="navbar-brand" asp-page="/Index">
                     🏫 Портал преподавателя
                 </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="navbar-collapse collapse d-lg-flex justify-content-between">
-                    <!-- Левая часть меню -->
+                    <!-- ЛЕВАЯ ЧАСТЬ МЕНЮ (Ссылки) -->
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <!-- Для авторизованных пользователей -->
+                            <!-- Меню для авторизованных пользователей -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Lessons/Counter">
-                                    📊 Счетчик пар
-                                </a>
+                                <a class="nav-link text-dark" asp-page="/Lessons/Counter">📊 Счетчик пар</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Materials/ByGroup">
-                                    📚 Материалы студентам
-                                </a>
+                                <a class="nav-link text-dark" asp-page="/Materials/ByGroup">📚 Материалы студентам</a>
                             </li>
 
-                            <!-- Админ-меню (только для администраторов) -->
+                            <!-- АДМИН-МЕНЮ (только для администраторов) -->
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item dropdown">
@@ -68,48 +75,24 @@
                                         ⚙️ Администрирование
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                        <li>
-                                            <a class="dropdown-item" asp-page="/Admin/Filials/Index">
-                                                🏢 Филиалы
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" asp-page="/Admin/Groups/Index">
-                                                👥 Группы
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" asp-page="/Admin/Students/Index">
-                                                👨‍🎓 Студенты
-                                            </a>
-                                        </li>
+                                        <li><a class="dropdown-item" asp-page="/Admin/Filials/Index">🏢 Филиалы</a></li>
+                                        <li><a class="dropdown-item" asp-page="/Admin/Groups/Index">👥 Группы</a></li>
+                                        <li><a class="dropdown-item" asp-page="/Admin/Students/Index">👨‍🎓 Студенты</a></li>
                                         <li><hr class="dropdown-divider" /></li>
-                                        <li>
-                                            <a class="dropdown-item" asp-page="/Admin/Students/Import">
-                                                📥 Импорт студентов
-                                            </a>
-                                        </li>
+                                        <li><a class="dropdown-item" asp-page="/Admin/Invites/Index">✉️ Приглашения</a></li>
                                     </ul>
                                 </li>
                             }
                         }
                         else
                         {
-                            <!-- Для неавторизованных пользователей -->
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Materials/ByGroup">
-                                    📚 Материалы студентам
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Account/Login">
-                                    🔐 Вход
-                                </a>
-                            </li>
+                            <!-- Для гостей: меню скрыто, оставляем только место для бренда -->
+                            <!-- Здесь можно добавить ссылку на страницу "О проекте", если нужно -->
                         }
                     </ul>
 
-                    <!-- Правая часть меню (информация о пользователе) -->
+                    <!-- ПРАВАЯ ЧАСТЬ МЕНЮ (Профиль и вход) -->
+                    <!-- ПРАВАЯ ЧАСТЬ МЕНЮ (Профиль, админка и выход) -->
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
@@ -119,6 +102,7 @@
                                     👤 @(User.Identity?.Name ?? "Пользователь")
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <!-- Информация о пользователе -->
                                     <li>
                                         <span class="dropdown-item-text text-muted">
                                             <small>
@@ -133,7 +117,28 @@
                                             </small>
                                         </span>
                                     </li>
+
                                     <li><hr class="dropdown-divider" /></li>
+
+                                    <!-- АДМИН-МЕНЮ (только для администраторов) -->
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li class="dropdown-submenu">
+                                            <a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                                ⚙️ Администрирование
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" asp-page="/Admin/Filials/Index">🏢 Филиалы</a></li>
+                                                <li><a class="dropdown-item" asp-page="/Admin/Groups/Index">👥 Группы</a></li>
+                                                <li><a class="dropdown-item" asp-page="/Admin/Students/Index">👨‍🎓 Студенты</a></li>
+                                                <li><hr class="dropdown-divider" /></li>
+                                                <li><a class="dropdown-item" asp-page="/Admin/Invites/Index">✉️ Приглашения</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><hr class="dropdown-divider" /></li>
+                                    }
+
+                                    <!-- Кнопка выхода -->
                                     <li>
                                         <form asp-page="/Account/Logout" method="post" id="logoutForm">
                                             <button type="submit" class="dropdown-item text-danger">
@@ -146,10 +151,9 @@
                         }
                         else
                         {
+                            <!-- Для гостей: только вход -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Account/Register">
-                                    📝 Регистрация
-                                </a>
+                                <a class="nav-link text-dark" asp-page="/Account/Login">🔐 Вход</a>
                             </li>
                         }
                     </ul>
@@ -158,12 +162,14 @@
         </nav>
     </header>
 
+    <!-- Основной контент -->
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
+    <!-- Футер -->
     <footer class="border-top footer text-muted mt-5">
         <div class="container">
             <div class="row">

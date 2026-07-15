@@ -1,0 +1,28 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using TeacherPortal.Web.Data;
+using TeacherPortal.Web.Models.Entities;
+
+namespace TeacherPortal.Web.Pages.Admin.Invites;
+
+[Authorize(Policy = "AdminOnly")]
+public class IndexModel : PageModel
+{
+private readonly ApplicationDbContext _context;
+
+public IndexModel(ApplicationDbContext context)
+{
+_context = context;
+}
+
+public List<TeacherInvite>
+Invites { get; set; } = new();
+
+public async Task OnGetAsync()
+{
+Invites = await _context.TeacherInvites
+.OrderByDescending(i => i.CreatedAt)
+.ToListAsync();
+}
+}

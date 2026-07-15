@@ -17,6 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public DbSet<Lesson> Lessons { get; set; }
     public DbSet<Material> Materials { get; set; }
     public DbSet<Student> Students { get; set; }
+    public DbSet<TeacherInvite> TeacherInvites { get; set; }
 
     public static async Task InitializeAsync(ApplicationDbContext context)
     {

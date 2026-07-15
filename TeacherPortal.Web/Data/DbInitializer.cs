@@ -1,10 +1,12 @@
-﻿using TeacherPortal.Web.Models.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using TeacherPortal.Web.Models.Entities;
 
 namespace TeacherPortal.Web.Data;
 
 public static class DbInitializer
 {
-    public static async Task InitializeAsync(ApplicationDbContext context)
+    public static async Task InitializeAsync(ApplicationDbContext context, IServiceProvider serviceProvider)
     {
         // Проверяем, есть ли уже филиалы
         if (context.Filials.Any())
@@ -29,54 +31,19 @@ public static class DbInitializer
         await context.SaveChangesAsync();
 
         // ========================================
-        // 2. СОЗДАЕМ КУРСЫ (ПРИВЯЗЫВАЕМ К ФИЛИАЛАМ)
+        // 2. СОЗДАЕМ КУРСЫ
         // ========================================
-        var filial1 = filials[0]; // Условный Ф 1
-        var filial2 = filials[1]; // Условный Ф 2
-        var filial3 = filials[2]; // Условный Ф 3
+        var filial1 = filials[0];
+        var filial2 = filials[1];
+        var filial3 = filials[2];
 
         var courses = new[]
         {
-            new Course
-            {
-                Name = "ASP.NET Core Разработка",
-                Code = "IT-401",
-                TotalLessons = 32,
-                FilialId = filial1.Id,
-                CreatedAt = DateTime.UtcNow
-            },
-            new Course
-            {
-                Name = "Базы данных SQL",
-                Code = "IT-302",
-                TotalLessons = 28,
-                FilialId = filial1.Id,
-                CreatedAt = DateTime.UtcNow
-            },
-            new Course
-            {
-                Name = "Frontend Разработка (React)",
-                Code = "IT-403",
-                TotalLessons = 30,
-                FilialId = filial2.Id,
-                CreatedAt = DateTime.UtcNow
-            },
-            new Course
-            {
-                Name = "Python для анализа данных",
-                Code = "IT-501",
-                TotalLessons = 24,
-                FilialId = filial2.Id,
-                CreatedAt = DateTime.UtcNow
-            },
-            new Course
-            {
-                Name = "DevOps практика",
-                Code = "IT-601",
-                TotalLessons = 20,
-                FilialId = filial3.Id,
-                CreatedAt = DateTime.UtcNow
-            }
+            new Course { Name = "ASP.NET Core Разработка", Code = "IT-401", TotalLessons = 32, FilialId = filial1.Id, CreatedAt = DateTime.UtcNow },
+            new Course { Name = "Базы данных SQL", Code = "IT-302", TotalLessons = 28, FilialId = filial1.Id, CreatedAt = DateTime.UtcNow },
+            new Course { Name = "Frontend Разработка (React)", Code = "IT-403", TotalLessons = 30, FilialId = filial2.Id, CreatedAt = DateTime.UtcNow },
+            new Course { Name = "Python для анализа данных", Code = "IT-501", TotalLessons = 24, FilialId = filial2.Id, CreatedAt = DateTime.UtcNow },
+            new Course { Name = "DevOps практика", Code = "IT-601", TotalLessons = 20, FilialId = filial3.Id, CreatedAt = DateTime.UtcNow }
         };
 
         await context.Courses.AddRangeAsync(courses);
@@ -85,50 +52,26 @@ public static class DbInitializer
         // ========================================
         // 3. СОЗДАЕМ ГРУППЫ
         // ========================================
-        var aspNetCourse = courses[0]; // ASP.NET Core
-        var sqlCourse = courses[1];    // Базы данных SQL
-        var reactCourse = courses[2];  // Frontend
+        var aspNetCourse = courses[0];
+        var sqlCourse = courses[1];
+        var reactCourse = courses[2];
 
         var groups = new[]
         {
-            new Group
-            {
-                Name = "Группа 41-ИС-1",
-                CourseId = aspNetCourse.Id,
-                CurrentLessonNumber = 0,
-                CreatedAt = DateTime.UtcNow
-            },
-            new Group
-            {
-                Name = "Группа 41-ИС-2",
-                CourseId = aspNetCourse.Id,
-                CurrentLessonNumber = 0,
-                CreatedAt = DateTime.UtcNow
-            },
-            new Group
-            {
-                Name = "Группа 42-БД-1",
-                CourseId = sqlCourse.Id,
-                CurrentLessonNumber = 0,
-                CreatedAt = DateTime.UtcNow
-            },
-            new Group
-            {
-                Name = "Группа 43-ФР-1",
-                CourseId = reactCourse.Id,
-                CurrentLessonNumber = 0,
-                CreatedAt = DateTime.UtcNow
-            }
+            new Group { Name = "Группа 41-ИС-1", CourseId = aspNetCourse.Id, CurrentLessonNumber = 0, CreatedAt = DateTime.UtcNow },
+            new Group { Name = "Группа 41-ИС-2", CourseId = aspNetCourse.Id, CurrentLessonNumber = 0, CreatedAt = DateTime.UtcNow },
+            new Group { Name = "Группа 42-БД-1", CourseId = sqlCourse.Id, CurrentLessonNumber = 0, CreatedAt = DateTime.UtcNow },
+            new Group { Name = "Группа 43-ФР-1", CourseId = reactCourse.Id, CurrentLessonNumber = 0, CreatedAt = DateTime.UtcNow }
         };
 
         await context.Groups.AddRangeAsync(groups);
         await context.SaveChangesAsync();
 
         // ========================================
-        // 4. ДОБАВЛЯЕМ СТУДЕНТОВ (для первых двух групп)
+        // 4. ДОБАВЛЯЕМ СТУДЕНТОВ
         // ========================================
-        var group1 = groups[0]; // 41-ИС-1
-        var group2 = groups[1]; // 41-ИС-2
+        var group1 = groups[0];
+        var group2 = groups[1];
 
         var students = new[]
         {
@@ -142,6 +85,62 @@ public static class DbInitializer
 
         await context.Students.AddRangeAsync(students);
         await context.SaveChangesAsync();
+
+        // ========================================
+        // 5. ПРИГЛАШЕНИЯ (ДЛЯ ПРЕПОДОВАТЕЛЕЙ)
+        // ========================================
+        var invites = new[]
+        {
+            new TeacherInvite { Email = "teacher1@college.edu", CreatedAt = DateTime.UtcNow, IsUsed = false },
+            new TeacherInvite { Email = "teacher2@college.edu", CreatedAt = DateTime.UtcNow, IsUsed = false },
+            new TeacherInvite { Email = "teacher3@college.edu", CreatedAt = DateTime.UtcNow, IsUsed = false }
+        };
+
+        foreach (var invite in invites)
+        {
+            if (!await context.TeacherInvites.AnyAsync(i => i.Email == invite.Email))
+            {
+                await context.TeacherInvites.AddAsync(invite);
+            }
+        }
+        await context.SaveChangesAsync();
+
+        // ========================================
+        // 6. СОЗДАЕМ РОЛИ И АДМИНИСТРАТОРА
+        // ========================================
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+
+            // Создаем роли
+            if (!await roleManager.RoleExistsAsync("Admin"))
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+            if (!await roleManager.RoleExistsAsync("Teacher"))
+                await roleManager.CreateAsync(new IdentityRole("Teacher"));
+
+            // Создаем администратора
+            var adminEmail = "admin@teacherportal.com";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser == null)
+            {
+                adminUser = new AppUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    FullName = "Администратор Системы",
+                    IsTeacher = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+                var result = await userManager.CreateAsync(adminUser, "Admin123!");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                    await userManager.AddToRoleAsync(adminUser, "Teacher");
+                }
+            }
+        }
 
         Console.WriteLine($"✅ База данных инициализирована! Филиалов: {filials.Length}, Курсов: {courses.Length}, Групп: {groups.Length}, Студентов: {students.Length}");
     }
