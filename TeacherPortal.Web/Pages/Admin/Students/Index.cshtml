@@ -1,0 +1,99 @@
+﻿@page "/admin/students"
+@model TeacherPortal.Web.Pages.Admin.Students.IndexModel
+@{
+    ViewData["Title"] = "Управление студентами";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>👨‍🎓 Управление студентами</h2>
+        <div>
+            <a asp-page="Import" class="btn btn-success me-2">📥 Импорт из Excel</a>
+            <a asp-page="Create" class="btn btn-primary">+ Добавить студента</a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mt-3">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Фильтр по группе:</label>
+                <select id="groupFilter" class="form-control" onchange="applyFilter()">
+                    <option value="">Все группы</option>
+                    @foreach (var group in Model.Groups)
+                    {
+                        <option value="@group.Id" selected="@(group.Id == Model.SelectedGroupId)">
+                            @group.Name (@group.FilialName)
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Поиск по имени:</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Введите имя студента..." oninput="applyFilter()" />
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Email</th>
+                    <th>Группа</th>
+                    <th>Филиал</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model.Students)
+                {
+                    <tr>
+                        <td>@student.FullName</td>
+                        <td>@student.Email</td>
+                        <td>@student.GroupName</td>
+                        <td>@student.FilialName</td>
+                        <td>
+                            <a asp-page="Edit" asp-route-id="@student.Id" class="btn btn-sm btn-warning">✏️</a>
+                            <a asp-page="Delete" asp-route-id="@student.Id" class="btn btn-sm btn-danger">🗑️</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.Students.Any())
+        {
+            <div class="alert alert-info mt-3">
+                Студентов не найдено. Попробуйте изменить фильтры или <a asp-page="Import">импортируйте</a> их из Excel.
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function applyFilter() {
+            const groupId = document.getElementById('groupFilter').value;
+            const search = document.getElementById('searchInput').value;
+            window.location.href = `/admin/students?groupId=${groupId}&search=${encodeURIComponent(search)}`;
+        }
+    </script>
+}

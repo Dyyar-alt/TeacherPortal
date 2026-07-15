@@ -1,0 +1,60 @@
+﻿@page "/admin/groups/edit/{id:int}"
+@model TeacherPortal.Web.Pages.Admin.Groups.EditModel
+@{
+    ViewData["Title"] = "Редактирование группы";
+}
+
+<div class="container mt-4">
+    <h2>✏️ Редактирование группы</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Group.Id" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Group.Name" class="control-label"></label>
+                    <input asp-for="Group.Name" class="form-control" />
+                    <span asp-validation-for="Group.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Group.CourseId" class="control-label"></label>
+                    <select asp-for="Group.CourseId" class="form-control" asp-items="Model.Courses">
+                        <option value="">-- Выберите курс --</option>
+                    </select>
+                    <span asp-validation-for="Group.CourseId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Сохранить" class="btn btn-primary" />
+                    <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>ℹ️ Информация</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Текущая группа:</strong> @Model.Group.Name</p>
+                    <p>
+                        <strong>Текущий курс:</strong>
+                        @(Model.Courses.FirstOrDefault(c => c.Value == Model.Group.CourseId.ToString())?.Text ?? "Не выбран")
+                    </p>
+                    <p><small class="text-muted">Вы можете изменить название группы или привязать ее к другому курсу.</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -20,3 +20,37 @@ html {
 body {
   margin-bottom: 60px;
 }
+/* Основные стили для портала */
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.card {
+    border-radius: 0.75rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+.btn {
+    border-radius: 0.5rem;
+}
+
+.table {
+    vertical-align: middle;
+}
+
+.progress {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+/* Для красивого отображения аккордеона на странице материалов */
+.accordion-button:not(.collapsed) {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+}

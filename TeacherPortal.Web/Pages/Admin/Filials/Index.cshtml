@@ -1,0 +1,51 @@
+﻿@page "/admin/filials"
+@model TeacherPortal.Web.Pages.Admin.Filials.IndexModel
+@{
+    ViewData["Title"] = "Управление филиалами";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>🏢 Управление филиалами</h2>
+        <a asp-page="Create" class="btn btn-primary">+ Добавить филиал</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="table-responsive mt-4">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Адрес</th>
+                    <th>Телефон</th>
+                    <th>Курсов</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var filial in Model.Filials)
+                {
+                    <tr>
+                        <td>@filial.Id</td>
+                        <td>@filial.Name</td>
+                        <td>@filial.Address</td>
+                        <td>@filial.Phone</td>
+                        <td>@filial.CoursesCount</td>
+                        <td>
+                            <a asp-page="Edit" asp-route-id="@filial.Id" class="btn btn-sm btn-warning">✏️</a>
+                            <a asp-page="Delete" asp-route-id="@filial.Id" class="btn btn-sm btn-danger">🗑️</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

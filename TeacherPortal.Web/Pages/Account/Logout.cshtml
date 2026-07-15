@@ -1,0 +1,20 @@
+﻿@page "/account/logout"
+@model TeacherPortal.Web.Pages.Account.LogoutModel
+@{
+    ViewData["Title"] = "Выход";
+}
+
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h4>🚪 Выход из системы</h4>
+        </div>
+        <div class="card-body text-center">
+            <p>Вы уверены, что хотите выйти?</p>
+            <form method="post">
+                <button type="submit" class="btn btn-danger">Да, выйти</button>
+                <a asp-page="/Index" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>

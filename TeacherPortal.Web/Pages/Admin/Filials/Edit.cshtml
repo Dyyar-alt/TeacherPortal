@@ -1,0 +1,48 @@
+﻿@page "/admin/filials/edit/{id:int}"
+@model TeacherPortal.Web.Pages.Admin.Filials.EditModel
+@{
+    ViewData["Title"] = "Редактирование филиала";
+}
+
+<div class="container mt-4">
+    <h2>✏️ Редактирование филиала</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Filial.Id" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Filial.Name" class="control-label"></label>
+                    <input asp-for="Filial.Name" class="form-control" />
+                    <span asp-validation-for="Filial.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Filial.Address" class="control-label"></label>
+                    <input asp-for="Filial.Address" class="form-control" />
+                    <span asp-validation-for="Filial.Address" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Filial.Phone" class="control-label"></label>
+                    <input asp-for="Filial.Phone" class="form-control" />
+                    <span asp-validation-for="Filial.Phone" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Сохранить" class="btn btn-primary" />
+                    <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

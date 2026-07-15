@@ -1,0 +1,35 @@
+﻿@page "/admin/students/delete/{id:int}"
+@model TeacherPortal.Web.Pages.Admin.Students.DeleteModel
+@{
+    ViewData["Title"] = "Удаление студента";
+}
+
+<div class="container mt-4">
+    <h2>🗑️ Удаление студента</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5>Подтверждение удаления</h5>
+                </div>
+                <div class="card-body">
+                    <p>Вы действительно хотите удалить студента <strong>"@Model.Student.FullName"</strong>?</p>
+                    <p><strong>Группа:</strong> @Model.GroupName</p>
+                    <p><strong>Email:</strong> @Model.Student.Email</p>
+
+                    <div class="alert alert-warning">
+                        ⚠️ Это действие необратимо. Студент будет удален из базы данных вместе со всеми связями.
+                    </div>
+
+                    <form method="post">
+                        <input type="hidden" asp-for="Student.Id" />
+                        <input type="submit" value="Удалить" class="btn btn-danger" />
+                        <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

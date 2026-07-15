@@ -1,0 +1,43 @@
+﻿@page "/admin/filials/delete/{id:int}"
+@model TeacherPortal.Web.Pages.Admin.Filials.DeleteModel
+@{
+    ViewData["Title"] = "Удаление филиала";
+}
+
+<div class="container mt-4">
+    <h2>🗑️ Удаление филиала</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5>Подтверждение удаления</h5>
+                </div>
+                <div class="card-body">
+                    <p>Вы действительно хотите удалить филиал <strong>"@Model.Filial.Name"</strong>?</p>
+
+                    @if (Model.HasRelatedCourses)
+                    {
+                        <div class="alert alert-warning">
+                            ⚠️ <strong>Внимание!</strong> Этот филиал содержит @Model.CoursesCount курсов.
+                            Удаление филиала приведет к удалению всех связанных курсов, групп и студентов.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            ℹ️ Этот филиал не содержит курсов. Его можно безопасно удалить.
+                        </div>
+                    }
+
+                    <form method="post">
+                        <input type="hidden" asp-for="Filial.Id" />
+                        <input type="submit" value="Удалить" class="btn btn-danger" />
+                        <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

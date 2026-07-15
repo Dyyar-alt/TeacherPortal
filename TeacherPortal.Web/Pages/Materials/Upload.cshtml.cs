@@ -82,7 +82,9 @@ public class UploadModel : PageModel
 
         try
         {
-            var fileName = $"{Guid.NewGuid():N}_{Path.GetFileName(Upload.File.FileName)}";
+            // 1. Получаем оригинальное имя файла
+            var originalFileName = Path.GetFileName(Upload.File.FileName);
+            var fileName = originalFileName;
             var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "materials");
 
             if (!Directory.Exists(uploadsFolder))
@@ -90,18 +92,32 @@ public class UploadModel : PageModel
                 Directory.CreateDirectory(uploadsFolder);
             }
 
+            // 2. Проверяем, существует ли файл с таким именем
             var filePath = Path.Combine(uploadsFolder, fileName);
+            int counter = 1;
 
+            // 3. Если файл существует, добавляем суффикс (1), (2), etc.
+            while (System.IO.File.Exists(filePath))
+            {
+                var nameWithoutExt = Path.GetFileNameWithoutExtension(originalFileName);
+                var ext = Path.GetExtension(originalFileName);
+                fileName = $"{nameWithoutExt} ({counter}){ext}";
+                filePath = Path.Combine(uploadsFolder, fileName);
+                counter++;
+            }
+
+            // 4. Сохраняем файл
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await Upload.File.CopyToAsync(stream);
             }
 
+            // 5. Сохраняем информацию в БД (сохраняем человеческое имя)
             var material = new Material
             {
                 Title = Upload.Title,
                 Description = Upload.Description,
-                FilePath = $"/uploads/materials/{fileName}",
+                FilePath = $"/uploads/materials/{fileName}", // <-- Теперь без GUID
                 LessonId = Upload.LessonId,
                 UploadedAt = DateTime.UtcNow,
                 UploadedBy = User.Identity?.Name ?? "Преподаватель"
@@ -113,6 +129,7 @@ public class UploadModel : PageModel
             SuccessMessage = $"Материал \"{Upload.Title}\" успешно загружен!";
             _logger.LogInformation($"Загружен материал {Upload.Title} для пары {Upload.LessonId}");
 
+            // Очищаем форму для новой загрузки
             Upload = new UploadMaterialViewModel { LessonId = Upload.LessonId };
             await OnGetAsync(Upload.LessonId);
 

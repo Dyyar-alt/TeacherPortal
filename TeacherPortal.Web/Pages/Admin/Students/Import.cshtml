@@ -1,0 +1,74 @@
+﻿@page "/admin/students/import"
+@model TeacherPortal.Web.Pages.Admin.Students.ImportModel
+@{
+    ViewData["Title"] = "Импорт студентов из Excel";
+}
+
+<div class="container mt-4">
+    <h2>📥 Импорт студентов из Excel</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Import.GroupId" class="control-label"></label>
+                            <select asp-for="Import.GroupId" class="form-control" asp-items="Model.Groups">
+                                <option value="">-- Выберите группу --</option>
+                            </select>
+                            <span asp-validation-for="Import.GroupId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Import.File" class="control-label"></label>
+                            <input asp-for="Import.File" type="file" class="form-control" />
+                            <span asp-validation-for="Import.File" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Поддерживаемые форматы: .xlsx, .xls.
+                                Файл должен содержать столбец "ФИО" (обязательно) и "Email" (опционально).
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="Импортировать" class="btn btn-success" />
+                            <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>📋 Пример Excel-файла</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Иванов Иван Иванович</td><td>ivanov@college.edu</td></tr>
+                            <tr><td>Петрова Мария Сергеевна</td><td>petrova@college.edu</td></tr>
+                        </tbody>
+                    </table>
+                    <small class="text-muted">Первый лист Excel-файла должен содержать эти колонки</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
