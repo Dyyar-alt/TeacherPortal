@@ -20,6 +20,9 @@ public class GroupAdminViewModel
     [Display(Name = "Филиал")]
     public string FilialName { get; set; } = string.Empty;
 
+    [Display(Name = "Адрес филиала")]
+    public string FilialAddress { get; set; } = string.Empty; // <-- Добавлено
+
     [Display(Name = "Студентов")]
     public int StudentsCount { get; set; }
 }

@@ -6,7 +6,7 @@ using TeacherPortal.Web.Models.ViewModels.Admin;
 
 namespace TeacherPortal.Web.Pages.Admin.Groups;
 
-[Authorize(Policy = "AdminOnly")]
+[Authorize(Roles = "Admin")]
 public class IndexModel : PageModel
 {
     private readonly ApplicationDbContext _context;
@@ -27,14 +27,16 @@ public class IndexModel : PageModel
         SelectedFilialId = filialId;
         SelectedCourseId = courseId;
 
-        // Загружаем списки для фильтров
         Filials = await _context.Filials
             .Select(f => new FilialAdminViewModel
             {
                 Id = f.Id,
-                Name = f.Name
+                Name = f.Name,
+                Address = f.Address,
+                Phone = f.Phone
             })
             .OrderBy(f => f.Name)
+            .ThenBy(f => f.Address)
             .ToListAsync();
 
         Courses = await _context.Courses
@@ -43,13 +45,13 @@ public class IndexModel : PageModel
             {
                 Id = c.Id,
                 Name = c.Name,
-                FilialName = c.Filial.Name
+                FilialName = c.Filial.Name,
+                FilialAddress = c.Filial.Address ?? ""
             })
             .OrderBy(c => c.FilialName)
             .ThenBy(c => c.Name)
             .ToListAsync();
 
-        // Загружаем группы с фильтрацией
         var query = _context.Groups
             .Include(g => g.Course)
             .ThenInclude(c => c.Filial)
@@ -74,6 +76,7 @@ public class IndexModel : PageModel
                 CourseId = g.CourseId,
                 CourseName = g.Course.Name,
                 FilialName = g.Course.Filial.Name,
+                FilialAddress = g.Course.Filial.Address ?? "",
                 StudentsCount = g.Students.Count
             })
             .OrderBy(g => g.FilialName)
@@ -88,4 +91,5 @@ public class CourseAdminViewModel
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string FilialName { get; set; } = string.Empty;
+    public string FilialAddress { get; set; } = string.Empty;
 }

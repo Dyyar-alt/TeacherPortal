@@ -6,7 +6,7 @@ using TeacherPortal.Web.Models.ViewModels.Admin;
 
 namespace TeacherPortal.Web.Pages.Admin.Filials;
 
-[Authorize(Policy = "AdminOnly")]
+[Authorize(Roles = "Admin")]
 public class IndexModel : PageModel
 {
     private readonly ApplicationDbContext _context;
@@ -30,6 +30,7 @@ public class IndexModel : PageModel
                 CoursesCount = f.Courses.Count
             })
             .OrderBy(f => f.Name)
+            .ThenBy(f => f.Address) // Сортировка по адресу для одинаковых названий
             .ToListAsync();
     }
 }

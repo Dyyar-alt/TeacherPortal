@@ -25,21 +25,18 @@
                                     name="filialId"
                                     value="@filial.Id"
                                     class="btn btn-outline-primary w-100 py-3 text-start shadow-sm hover-shadow">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>@filial.Name</strong>
-                                        @if (!string.IsNullOrEmpty(filial.Address))
-                                        {
-                                            <br />
-                                            <small class="text-muted">📍 @filial.Address</small>
-                                        }
-                                        @if (!string.IsNullOrEmpty(filial.Phone))
-                                        {
-                                            <br />
-                                            <small class="text-muted">📞 @filial.Phone</small>
-                                        }
-                                    </div>
-                                    <span style="font-size: 24px;">→</span>
+                                <div>
+                                    <strong>@filial.Name</strong>
+                                    @if (!string.IsNullOrEmpty(filial.Address))
+                                    {
+                                        <br />
+                                        <small class="text-muted">📍 @filial.Address</small>
+                                    }
+                                    @if (!string.IsNullOrEmpty(filial.Phone))
+                                    {
+                                        <br />
+                                        <small class="text-muted">📞 @filial.Phone</small>
+                                    }
                                 </div>
                             </button>
                         </div>

@@ -22,9 +22,8 @@
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Название</th>
-                    <th>Адрес</th>
+                    <th>Адрес (город)</th>
                     <th>Телефон</th>
                     <th>Курсов</th>
                     <th>Действия</th>
@@ -34,7 +33,6 @@
                 @foreach (var filial in Model.Filials)
                 {
                     <tr>
-                        <td>@filial.Id</td>
                         <td>@filial.Name</td>
                         <td>@filial.Address</td>
                         <td>@filial.Phone</td>

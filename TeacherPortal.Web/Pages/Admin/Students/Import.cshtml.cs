@@ -44,11 +44,6 @@ public class ImportModel : PageModel
             return Page();
         }
 
-        // ... (весь остальной код остается без изменений) ...
-        // Проверка файла, обработка Excel и т.д.
-
-        // --- КОД НИЖЕ НЕ МЕНЯЕТСЯ, ОН РАБОТАЕТ КОРРЕКТНО ---
-
         if (Import.File == null || Import.File.Length == 0)
         {
             ErrorMessage = "Пожалуйста, выберите файл.";
@@ -84,7 +79,7 @@ public class ImportModel : PageModel
 
             if (rowCount < 2)
             {
-                ErrorMessage = "Файл не содержит данных для импорта.";
+                ErrorMessage = "Файл не содержит данных для импорта (нет строк с данными).";
                 await LoadGroupsAsync();
                 return Page();
             }
@@ -97,14 +92,18 @@ public class ImportModel : PageModel
             {
                 var header = worksheet.Cells[headerRow, col].Text.Trim().ToLowerInvariant();
                 if (header == "фио" || header.Contains("ф.и.о.") || header == "fullname" || header == "name")
+                {
                     nameCol = col;
+                }
                 if (header == "email" || header == "почта")
+                {
                     emailCol = col;
+                }
             }
 
             if (nameCol == -1)
             {
-                ErrorMessage = "В файле не найден столбец 'ФИО'.";
+                ErrorMessage = "В файле не найден столбец 'ФИО'. Проверьте заголовки.";
                 await LoadGroupsAsync();
                 return Page();
             }
@@ -146,13 +145,15 @@ public class ImportModel : PageModel
                 SkippedCount = skipped;
                 SuccessMessage = $"Импортировано {ImportedCount} студентов.";
                 if (SkippedCount > 0)
-                    SuccessMessage += $" Пропущено: {SkippedCount}.";
+                {
+                    SuccessMessage += $" Пропущено: {SkippedCount} (пустые или некорректные строки).";
+                }
 
                 _logger.LogInformation($"Импортировано {ImportedCount} студентов в группу {group.Name}");
             }
             else
             {
-                ErrorMessage = "Не найдено данных для импорта.";
+                ErrorMessage = "Не найдено данных для импорта. Проверьте формат файла.";
             }
         }
         catch (Exception ex)
@@ -167,17 +168,18 @@ public class ImportModel : PageModel
 
     private async Task LoadGroupsAsync()
     {
-        // === ИСПРАВЛЕННЫЙ МЕТОД ===
+        // Загружаем группы с курсами и филиалами
         var groups = await _context.Groups
             .Include(g => g.Course)
             .ThenInclude(c => c.Filial)
             .ToListAsync();
 
+        // Формируем список для выпадающего списка в памяти
         Groups = groups
             .Select(g => new SelectListItem
             {
                 Value = g.Id.ToString(),
-                Text = $"{g.Name} ({g.Course.Name} - {g.Course.Filial.Name})"
+                Text = $"{g.Name} ({g.Course.Name} - {g.Course.Filial.Name}, {g.Course.Filial.Address})"
             })
             .OrderBy(g => g.Text)
             .ToList();

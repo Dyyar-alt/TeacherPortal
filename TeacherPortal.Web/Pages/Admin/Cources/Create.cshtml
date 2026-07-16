@@ -1,0 +1,55 @@
+﻿@page "/admin/courses/create"
+@model TeacherPortal.Web.Pages.Admin.Courses.CreateModel
+@{
+    ViewData["Title"] = "Создание курса";
+}
+
+<div class="container mt-4">
+    <h2>➕ Создание курса</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Course.Name" class="control-label"></label>
+                    <input asp-for="Course.Name" class="form-control" />
+                    <span asp-validation-for="Course.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Course.Code" class="control-label"></label>
+                    <input asp-for="Course.Code" class="form-control" placeholder="IT-401" />
+                    <span asp-validation-for="Course.Code" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Course.TotalLessons" class="control-label"></label>
+                    <input asp-for="Course.TotalLessons" class="form-control" type="number" min="1" max="500" />
+                    <span asp-validation-for="Course.TotalLessons" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Course.FilialId" class="control-label"></label>
+                    <select asp-for="Course.FilialId" class="form-control" asp-items="Model.Filials">
+                        <option value="">-- Выберите филиал --</option>
+                    </select>
+                    <span asp-validation-for="Course.FilialId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Создать" class="btn btn-primary" />
+                    <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

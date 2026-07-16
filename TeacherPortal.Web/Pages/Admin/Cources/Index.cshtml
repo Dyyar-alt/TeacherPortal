@@ -1,13 +1,13 @@
-﻿@page "/admin/groups"
-@model TeacherPortal.Web.Pages.Admin.Groups.IndexModel
+﻿@page "/admin/courses"
+@model TeacherPortal.Web.Pages.Admin.Courses.IndexModel
 @{
-    ViewData["Title"] = "Управление группами";
+    ViewData["Title"] = "Управление курсами";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center">
-        <h2>👥 Управление группами</h2>
-        <a asp-page="Create" class="btn btn-primary">+ Добавить группу</a>
+        <h2>📚 Управление курсами</h2>
+        <a asp-page="Create" class="btn btn-primary">+ Добавить курс</a>
     </div>
 
     @if (TempData["SuccessMessage"] != null)
@@ -19,7 +19,7 @@
     }
 
     <div class="row mt-3">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="form-group">
                 <label>Фильтр по филиалу:</label>
                 <select id="filialFilter" class="form-control" onchange="applyFilter()">
@@ -33,18 +33,10 @@
                 </select>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="form-group">
-                <label>Фильтр по курсу:</label>
-                <select id="courseFilter" class="form-control" onchange="applyFilter()">
-                    <option value="">Все курсы</option>
-                    @foreach (var course in Model.Courses)
-                    {
-                        <option value="@course.Id" selected="@(course.Id == Model.SelectedCourseId)">
-                            @course.Name (@course.FilialName)
-                        </option>
-                    }
-                </select>
+                <label>Поиск по названию:</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Введите название курса..." oninput="applyFilter()" />
             </div>
         </div>
     </div>
@@ -54,28 +46,37 @@
             <thead>
                 <tr>
                     <th>Название</th>
-                    <th>Курс</th>
+                    <th>Код</th>
+                    <th>Пар</th>
                     <th>Филиал</th>
-                    <th>Студентов</th>
+                    <th>Групп</th>
                     <th>Действия</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var group in Model.Groups)
+                @foreach (var course in Model.Courses)
                 {
                     <tr>
-                        <td>@group.Name</td>
-                        <td>@group.CourseName</td>
-                        <td>@group.FilialName (@group.FilialAddress)</td>
-                        <td>@group.StudentsCount</td>
+                        <td>@course.Name</td>
+                        <td>@course.Code</td>
+                        <td>@course.TotalLessons</td>
+                        <td>@course.FilialName (@course.FilialAddress)</td>
+                        <td>@course.GroupsCount</td>
                         <td>
-                            <a asp-page="Edit" asp-route-id="@group.Id" class="btn btn-sm btn-warning">✏️</a>
-                            <a asp-page="Delete" asp-route-id="@group.Id" class="btn btn-sm btn-danger">🗑️</a>
+                            <a asp-page="Edit" asp-route-id="@course.Id" class="btn btn-sm btn-warning">✏️</a>
+                            <a asp-page="Delete" asp-route-id="@course.Id" class="btn btn-sm btn-danger">🗑️</a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
+        
+        @if (!Model.Courses.Any())
+        {
+            <div class="alert alert-info mt-3">
+                Курсов не найдено. <a asp-page="Create">Создайте первый курс</a>.
+            </div>
+        }
     </div>
 </div>
 
@@ -83,8 +84,8 @@
     <script>
         function applyFilter() {
             const filialId = document.getElementById('filialFilter').value;
-            const courseId = document.getElementById('courseFilter').value;
-            window.location.href = `/admin/groups?filialId=${filialId}&courseId=${courseId}`;
+            const search = document.getElementById('searchInput').value;
+            window.location.href = `/admin/courses?filialId=${filialId}&search=${encodeURIComponent(search)}`;
         }
     </script>
 }

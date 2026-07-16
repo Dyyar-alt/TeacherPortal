@@ -107,14 +107,17 @@ public class EditModel : PageModel
 
     private async Task LoadCoursesAsync()
     {
-        Courses = await _context.Courses
+        var courses = await _context.Courses
             .Include(c => c.Filial)
+            .ToListAsync();
+
+        Courses = courses
             .Select(c => new SelectListItem
             {
                 Value = c.Id.ToString(),
-                Text = $"{c.Name} ({c.Filial.Name})"
+                Text = $"{c.Name} ({c.Filial.Name}, {c.Filial.Address})"
             })
             .OrderBy(c => c.Text)
-            .ToListAsync();
+            .ToList();
     }
 }

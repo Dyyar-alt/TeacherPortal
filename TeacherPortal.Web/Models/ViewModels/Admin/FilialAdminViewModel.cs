@@ -11,7 +11,7 @@ public class FilialAdminViewModel
     public string Name { get; set; } = string.Empty;
 
     [Display(Name = "Адрес")]
-    public string? Address { get; set; }
+    public string? Address { get; set; } // <-- Это поле используется
 
     [Display(Name = "Телефон")]
     public string? Phone { get; set; }
@@ -21,7 +21,7 @@ public class FilialAdminViewModel
 
 public class FilialCreateEditViewModel
 {
-    public int Id { get; set; } // <-- Это свойство должно быть!
+    public int Id { get; set; }
 
     [Required(ErrorMessage = "Название филиала обязательно")]
     [Display(Name = "Название")]

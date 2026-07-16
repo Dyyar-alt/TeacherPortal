@@ -1,0 +1,46 @@
+﻿@page "/admin/courses/delete/{id:int}"
+@model TeacherPortal.Web.Pages.Admin.Courses.DeleteModel
+@{
+    ViewData["Title"] = "Удаление курса";
+}
+
+<div class="container mt-4">
+    <h2>🗑️ Удаление курса</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5>Подтверждение удаления</h5>
+                </div>
+                <div class="card-body">
+                    <p>Вы действительно хотите удалить курс <strong>"@Model.Course.Name"</strong>?</p>
+                    <p><strong>Код:</strong> @Model.Course.Code</p>
+                    <p><strong>Количество пар:</strong> @Model.Course.TotalLessons</p>
+                    <p><strong>Филиал:</strong> @Model.FilialName (@Model.FilialAddress)</p>
+
+                    @if (Model.HasRelatedGroups)
+                    {
+                        <div class="alert alert-warning">
+                            ⚠️ <strong>Внимание!</strong> Этот курс содержит @Model.GroupsCount групп.
+                            Удаление курса приведет к удалению всех связанных групп и студентов.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            ℹ️ Этот курс не содержит групп. Его можно безопасно удалить.
+                        </div>
+                    }
+
+                    <form method="post">
+                        <input type="hidden" asp-for="Course.Id" />
+                        <input type="submit" value="Удалить" class="btn btn-danger" />
+                        <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

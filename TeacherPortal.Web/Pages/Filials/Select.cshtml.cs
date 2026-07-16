@@ -24,29 +24,26 @@ public class SelectModel : PageModel
 
     public async Task OnGetAsync()
     {
-        // Загружаем все филиалы для отображения
         Filials = await _context.Filials
             .OrderBy(f => f.Name)
+            .ThenBy(f => f.Address) // Сортировка по адресу
             .ToListAsync();
     }
 
     public async Task<IActionResult> OnPostAsync(int filialId)
     {
-        // Проверяем, существует ли филиал
         var filial = await _context.Filials.FindAsync(filialId);
         if (filial == null)
         {
             ErrorMessage = "Филиал не найден. Попробуйте еще раз.";
-            Filials = await _context.Filials.OrderBy(f => f.Name).ToListAsync();
+            Filials = await _context.Filials.OrderBy(f => f.Name).ThenBy(f => f.Address).ToListAsync();
             return Page();
         }
 
-        // Сохраняем выбранный филиал в сессии
         HttpContext.Session.SetInt32("SelectedFilialId", filialId);
 
         _logger.LogInformation($"Пользователь {User.Identity?.Name} выбрал филиал: {filial.Name} (ID: {filialId})");
 
-        // Перенаправляем на страницу счетчика
         return RedirectToPage("/Lessons/Counter");
     }
 }
