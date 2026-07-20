@@ -14,6 +14,13 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group mb-3">
+                    <label asp-for="Student.Password" class="control-label"></label>
+                    <input asp-for="Student.Password" type="password" class="form-control" />
+                    <span asp-validation-for="Student.Password" class="text-danger"></span>
+                    <small class="form-text text-muted">Оставьте пустым, чтобы сгенерировать пароль автоматически.</small>
+                </div>
+
+                <div class="form-group mb-3">
                     <label asp-for="Student.FullName" class="control-label"></label>
                     <input asp-for="Student.FullName" class="form-control" />
                     <span asp-validation-for="Student.FullName" class="text-danger"></span>

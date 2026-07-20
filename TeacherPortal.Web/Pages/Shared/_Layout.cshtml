@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Портал преподавателя</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TeacherPortal.Web.styles.css" asp-append-version="true" />
@@ -22,10 +23,37 @@
                 background-color: #e9ecef;
             }
 
+            /* --- ИСПРАВЛЕННЫЙ ФУТЕР --- */
             .footer {
-                background-color: #f8f9fa;
-                padding: 1.5rem 0;
+                background-color: rgba(255, 255, 255, 0.7) !important;
+                backdrop-filter: blur(10px);
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                padding: 0.6rem 0 !important; /* Уменьшаем высоту */
+                margin-top: 1.5rem !important; /* Убираем большой отступ */
+                color: #495057 !important;
+                text-align: center;
+                font-size: 0.85rem;
+                flex-shrink: 0;
             }
+
+            /* Адаптация для мобильных */
+            @@media (max-width: 768px) {
+                .footer {
+                    padding: 0.4rem 0 !important;
+                    font-size: 0.7rem;
+                }
+
+                    .footer .row {
+                        flex-direction: column;
+                        text-align: center;
+                    }
+
+                    .footer .col-md-6 {
+                        width: 100%;
+                        text-align: center !important;
+                    }
+            }
+
             /* Стили для вложенных меню (если понадобятся) */
             .dropdown-submenu {
                 position: relative;
@@ -45,119 +73,85 @@
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
-            <div class="container">
-                <!-- Логотип -->
-                <a class="navbar-brand" asp-page="/Index">
-                    🏫 Портал преподавателя
-                </a>
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="navbar-collapse collapse d-lg-flex justify-content-between">
-                    <!-- ======================================== -->
-                    <!-- ЛЕВАЯ ЧАСТЬ: ОСНОВНОЕ МЕНЮ (Навигация) -->
-                    <!-- ======================================== -->
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <!-- Ссылки для всех авторизованных пользователей -->
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Lessons/Counter">📊 Счетчик пар</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Materials/ByGroup">📚 Материалы студентам</a>
-                            </li>
-
-                            <!-- АДМИН-МЕНЮ (только для администраторов) -->
-                            @if (User.IsInRole("Admin"))
+    <div class="content-wrapper">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+                <div class="container">
+                    <a class="navbar-brand" asp-page="/Index">
+                        🏫 Портал преподавателя
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-lg-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            @if (User.Identity?.IsAuthenticated == true)
                             {
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button"
-                                       data-bs-toggle="dropdown" aria-expanded="false">
-                                        ⚙️ Администрирование
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                        
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/Lessons/Counter">📊 Счетчик пар</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/Materials/ByGroup">📚 Материалы студентам</a>
+                                </li>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button"
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                            ⚙️ Администрирование
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                                             <li><a class="dropdown-item" href="/admin/filials">🏢 Филиалы</a></li>
                                             <li><a class="dropdown-item" href="/admin/courses">📚 Курсы</a></li>
                                             <li><a class="dropdown-item" href="/admin/groups">👥 Группы</a></li>
                                             <li><a class="dropdown-item" href="/admin/students">👨‍🎓 Студенты</a></li>
-                                            
-                                        <li><hr class="dropdown-divider" /></li>
+                                            <li><hr class="dropdown-divider" /></li>
                                             <li><a class="dropdown-item" href="/admin/invites">✉️ Приглашения</a></li>
-                                    </ul>
+                                            @if (User.IsInRole("Student"))
+                                            {
+                                                <li class="nav-item">
+                                                    <a class="nav-link text-dark" asp-page="/Student/Dashboard">📚 Мои материалы</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/Materials/ByGroup">📚 Материалы студентам</a>
                                 </li>
                             }
-                        }
-                        else
-                        {
-                            <!-- Для гостей: минимум ссылок -->
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Materials/ByGroup">📚 Материалы студентам</a>
-                            </li>
-                        }
-                    </ul>
-
-                    <!-- ======================================== -->
-                    <!-- ПРАВАЯ ЧАСТЬ: ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ -->
-                    <!-- ======================================== -->
-                    <ul class="navbar-nav">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button"
-                                   data-bs-toggle="dropdown" aria-expanded="false">
-                                    👤 @(User.Identity?.Name ?? "Пользователь")
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <!-- Информация о пользователе -->
-                                    <li>
-                                        <span class="dropdown-item-text text-muted">
-                                            <small>
-                                                @if (User.IsInRole("Admin"))
-                                                {
-                                                    <span class="badge bg-danger">Администратор</span>
-                                                }
-                                                @if (User.IsInRole("Teacher"))
-                                                {
-                                                    <span class="badge bg-primary">Преподаватель</span>
-                                                }
-                                            </small>
-                                        </span>
-                                    </li>
+                        </ul>
+                        <ul class="navbar-nav">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button"
+                                       data-bs-toggle="dropdown" aria-expanded="false">
+                                        👤 @(User.Identity?.Name ?? "Пользователь")
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                        <li><span class="dropdown-item-text text-muted"><small>@if (User.IsInRole("Admin")) {
+                                            <span class="badge bg-danger">Администратор</span>
+                                        }
+                                        @if (User.IsInRole("Teacher"))
+                                        {
+                                            <span class="badge bg-primary">Преподаватель</span>
+                                        }
+                                    </small></span></li>
                                     <li><hr class="dropdown-divider" /></li>
-
-                                    <!-- Пункт для будущих настроек профиля -->
-                                    <li>
-                                        <a class="dropdown-item" href="#" onclick="alert('Настройки профиля в разработке')">
-                                            ⚙️ Настройки профиля
-                                        </a>
-                                    </li>
-
+                                    <li><a class="dropdown-item" href="#" onclick="alert('Настройки профиля в разработке')"><i class="fas fa-cog"></i> Настройки профиля</a></li>
                                     <li><hr class="dropdown-divider" /></li>
-
-                                    <!-- Выход -->
-                                    <li>
-                                        <form asp-page="/Account/Logout" method="post" id="logoutForm">
-                                            <button type="submit" class="dropdown-item text-danger">
-                                                🚪 Выйти
-                                            </button>
-                                        </form>
-                                    </li>
+                                    <li><form asp-page="/Account/Logout" method="post"><button type="submit" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Выйти</button></form></li>
                                 </ul>
                             </li>
                         }
-                        else
+                            else
                         {
-                            <!-- Для гостей: только вход -->
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Account/Login">🔐 Вход</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Account/Login"><i class="fas fa-sign-in-alt"></i> Вход</a></li>
                         }
                     </ul>
                 </div>
@@ -168,12 +162,28 @@
     <!-- Основной контент -->
     <div class="container">
         <main role="main" class="pb-3">
+            <div class="alert-container" style="position: relative; z-index: 1040;">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show">
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+            </div>
             @RenderBody()
         </main>
     </div>
 
     <!-- Футер -->
-    <footer class="border-top footer text-muted mt-5">
+    <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
@@ -190,12 +200,12 @@
             </div>
         </div>
     </footer>
+</div>
 
-    <!-- Скрипты -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
+<!-- Скрипты -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

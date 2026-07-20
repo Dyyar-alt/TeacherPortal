@@ -65,7 +65,8 @@ public class IndexModel : PageModel
                 Email = s.Email,
                 GroupId = s.GroupId,
                 GroupName = s.Group.Name,
-                FilialName = s.Group.Course.Filial.Name
+                FilialName = s.Group.Course.Filial.Name,
+                FilialAddress = s.Group.Course.Filial.Address ?? ""
             })
             .OrderBy(s => s.FilialName)
             .ThenBy(s => s.GroupName)

@@ -87,7 +87,7 @@ public static class DbInitializer
         await context.SaveChangesAsync();
 
         // ========================================
-        // 5. ПРИГЛАШЕНИЯ (ДЛЯ ПРЕПОДОВАТЕЛЕЙ)
+        // 5. ПРИГЛАШЕНИЯ ДЛЯ ПРЕПОДОВАТЕЛЕЙ
         // ========================================
         var invites = new[]
         {
@@ -108,17 +108,21 @@ public static class DbInitializer
         // ========================================
         // 6. СОЗДАЕМ РОЛИ И АДМИНИСТРАТОРА
         // ========================================
+        // ИСПРАВЛЕНО: используем один общий scope
         using (var scope = serviceProvider.CreateScope())
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-            // Создаем роли
+            // Создаем роли, если их нет
             if (!await roleManager.RoleExistsAsync("Admin"))
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
 
             if (!await roleManager.RoleExistsAsync("Teacher"))
                 await roleManager.CreateAsync(new IdentityRole("Teacher"));
+
+            if (!await roleManager.RoleExistsAsync("Student")) // <-- Добавляем студента
+                await roleManager.CreateAsync(new IdentityRole("Student"));
 
             // Создаем администратора
             var adminEmail = "admin@teacherportal.com";

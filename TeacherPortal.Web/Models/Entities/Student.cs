@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace TeacherPortal.Web.Models.Entities;
 
@@ -18,4 +19,8 @@ public class Student
     public Group Group { get; set; } = null!;
 
     public DateTime EnrolledAt { get; set; } = DateTime.UtcNow;
+
+    // Связь с пользователем Identity (AppUser)
+    public string? IdentityUserId { get; set; }
+    public AppUser? IdentityUser { get; set; }
 }

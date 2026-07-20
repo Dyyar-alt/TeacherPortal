@@ -15,7 +15,7 @@ namespace TeacherPortal.Web.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -394,9 +394,15 @@ namespace TeacherPortal.Web.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("IdentityUserId")
+                        .IsUnique();
 
                     b.ToTable("Students");
                 });
@@ -529,7 +535,14 @@ namespace TeacherPortal.Web.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TeacherPortal.Web.Models.Entities.AppUser", "IdentityUser")
+                        .WithOne()
+                        .HasForeignKey("TeacherPortal.Web.Models.Entities.Student", "IdentityUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Group");
+
+                    b.Navigation("IdentityUser");
                 });
 
             modelBuilder.Entity("TeacherPortal.Web.Models.Entities.Course", b =>

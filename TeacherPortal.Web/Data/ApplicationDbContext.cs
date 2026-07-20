@@ -112,5 +112,11 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         modelBuilder.Entity<Lesson>()
             .HasIndex(l => new { l.GroupId, l.LessonNumber })
             .IsUnique();
+
+        modelBuilder.Entity<Student>()
+    .HasOne(s => s.IdentityUser)
+    .WithOne()
+    .HasForeignKey<Student>(s => s.IdentityUserId)
+    .OnDelete(DeleteBehavior.SetNull);
     }
 }

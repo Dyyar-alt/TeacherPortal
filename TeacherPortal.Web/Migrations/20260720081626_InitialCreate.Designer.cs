@@ -11,14 +11,14 @@ using TeacherPortal.Web.Data;
 namespace TeacherPortal.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260712222030_UpdateModels")]
-    partial class UpdateModels
+    [Migration("20260720081626_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -235,6 +235,9 @@ namespace TeacherPortal.Web.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("FilialId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -245,7 +248,34 @@ namespace TeacherPortal.Web.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FilialId");
+
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("TeacherPortal.Web.Models.Entities.Filial", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Filials");
                 });
 
             modelBuilder.Entity("TeacherPortal.Web.Models.Entities.Group", b =>
@@ -367,11 +397,38 @@ namespace TeacherPortal.Web.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
 
+                    b.HasIndex("IdentityUserId")
+                        .IsUnique();
+
                     b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("TeacherPortal.Web.Models.Entities.TeacherInvite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TeacherInvites");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -425,6 +482,17 @@ namespace TeacherPortal.Web.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TeacherPortal.Web.Models.Entities.Course", b =>
+                {
+                    b.HasOne("TeacherPortal.Web.Models.Entities.Filial", "Filial")
+                        .WithMany("Courses")
+                        .HasForeignKey("FilialId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Filial");
+                });
+
             modelBuilder.Entity("TeacherPortal.Web.Models.Entities.Group", b =>
                 {
                     b.HasOne("TeacherPortal.Web.Models.Entities.Course", "Course")
@@ -470,7 +538,14 @@ namespace TeacherPortal.Web.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TeacherPortal.Web.Models.Entities.AppUser", "IdentityUser")
+                        .WithOne()
+                        .HasForeignKey("TeacherPortal.Web.Models.Entities.Student", "IdentityUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Group");
+
+                    b.Navigation("IdentityUser");
                 });
 
             modelBuilder.Entity("TeacherPortal.Web.Models.Entities.Course", b =>
@@ -478,6 +553,11 @@ namespace TeacherPortal.Web.Migrations
                     b.Navigation("Groups");
 
                     b.Navigation("Lessons");
+                });
+
+            modelBuilder.Entity("TeacherPortal.Web.Models.Entities.Filial", b =>
+                {
+                    b.Navigation("Courses");
                 });
 
             modelBuilder.Entity("TeacherPortal.Web.Models.Entities.Group", b =>

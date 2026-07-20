@@ -15,14 +15,14 @@
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show mt-3">
+        <div class="alert alert-success alert-dismissible fade show mt-3" style="position: relative; z-index: 1040;">
             @TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show mt-3">
+        <div class="alert alert-danger alert-dismissible fade show mt-3" style="position: relative; z-index: 1040;">
             @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -37,7 +37,7 @@
                     @foreach (var group in Model.Groups)
                     {
                         <option value="@group.Id" selected="@(group.Id == Model.SelectedGroupId)">
-                            @group.Name (@group.FilialName)
+                            @group.Name (@group.FilialName, @group.FilialAddress)
                         </option>
                     }
                 </select>
@@ -58,7 +58,7 @@
                     <th>ФИО</th>
                     <th>Email</th>
                     <th>Группа</th>
-                    <th>Филиал</th>
+                    <th>Филиал (Адрес)</th>
                     <th>Действия</th>
                 </tr>
             </thead>
@@ -69,7 +69,7 @@
                         <td>@student.FullName</td>
                         <td>@student.Email</td>
                         <td>@student.GroupName</td>
-                        <td>@student.FilialName</td>
+                        <td>@student.FilialName (@student.FilialAddress)</td>
                         <td>
                             <a asp-page="Edit" asp-route-id="@student.Id" class="btn btn-sm btn-warning">✏️</a>
                             <a asp-page="Delete" asp-route-id="@student.Id" class="btn btn-sm btn-danger">🗑️</a>
