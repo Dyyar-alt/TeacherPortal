@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TeacherPortal.Web.Data;
 using TeacherPortal.Web.Models.Entities;
 using TeacherPortal.Web.Models.ViewModels;
+using TeacherPortal.Web.Services;
 
 namespace TeacherPortal.Web.Pages.Materials;
 
@@ -14,16 +15,20 @@ public class UploadModel : PageModel
     private readonly ApplicationDbContext _context;
     private readonly IWebHostEnvironment _environment;
     private readonly ILogger<UploadModel> _logger;
+    private readonly TelegramBotService _telegramBot;
 
     public UploadModel(
         ApplicationDbContext context,
         IWebHostEnvironment environment,
-        ILogger<UploadModel> logger)
+        ILogger<UploadModel> logger,
+        TelegramBotService telegramBot) // 
     {
         _context = context;
         _environment = environment;
         _logger = logger;
+        _telegramBot = telegramBot;
     }
+   
 
     [BindProperty]
     public UploadMaterialViewModel Upload { get; set; } = new();
@@ -128,6 +133,40 @@ public class UploadModel : PageModel
 
             SuccessMessage = $"Материал \"{Upload.Title}\" успешно загружен!";
             _logger.LogInformation($"Загружен материал {Upload.Title} для пары {Upload.LessonId}");
+
+            if (SuccessMessage != null)
+            {
+                // Получаем информацию о паре и группе
+                var lesson = await _context.Lessons
+                    .Include(l => l.Group)
+                    .FirstOrDefaultAsync(l => l.Id == Upload.LessonId);
+
+                if (lesson != null)
+                {
+                    var group = lesson.Group;
+                    if (group != null)
+                    {
+                        try
+                        {
+                            // Здесь нужно получить chatId студентов группы
+                            // Пока отправляем в чат с ID 123456789 (замените на реальный)
+                            var chatId = 123456789L;
+
+                            var message = $"📚 Новый материал для группы {group.Name}!\n\n" +
+                                          $"📄 {Upload.Title}\n" +
+                                          $"📝 {Upload.Description}\n\n" +
+                                          $"🔗 Ссылка: https://ваш-сайт.ru/materials/by-group?groupId={group.Id}";
+
+                            await _telegramBot.SendNotificationAsync(chatId, message);
+                            _logger.LogInformation($"Уведомление отправлено в Telegram для группы {group.Name}");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Не удалось отправить уведомление в Telegram");
+                        }
+                    }
+                }
+            }
 
             // Очищаем форму для новой загрузки
             Upload = new UploadMaterialViewModel { LessonId = Upload.LessonId };

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TeacherPortal.Web.Models.Validation;
 
 namespace TeacherPortal.Web.Models.ViewModels.Admin;
 
@@ -13,6 +14,7 @@ public class FilialAdminViewModel
     [Display(Name = "Адрес")]
     public string? Address { get; set; } // <-- Это поле используется
 
+    [RussianPhone]
     [Display(Name = "Телефон")]
     public string? Phone { get; set; }
 

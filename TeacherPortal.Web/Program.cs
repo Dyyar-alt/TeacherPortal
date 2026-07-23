@@ -56,6 +56,15 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+// Регистрируем настройки Telegram
+builder.Services.Configure<TelegramBotSettings>(
+    builder.Configuration.GetSection("TelegramBot"));
+
+// Регистрируем бота как фоновый сервис
+builder.Services.AddHostedService<TelegramBotService>();
+
+// Регистрируем сервис для отправки уведомлений (чтобы использовать в других местах)
+builder.Services.AddSingleton<TelegramBotService>();
 
 var app = builder.Build();
 

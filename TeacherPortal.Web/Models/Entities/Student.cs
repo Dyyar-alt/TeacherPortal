@@ -19,6 +19,8 @@ public class Student
     public Group Group { get; set; } = null!;
 
     public DateTime EnrolledAt { get; set; } = DateTime.UtcNow;
+    public long? ChatId { get; set; }
+
 
     // Связь с пользователем Identity (AppUser)
     public string? IdentityUserId { get; set; }
